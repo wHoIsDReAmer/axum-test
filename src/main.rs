@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+
+use axum::extract::Query;
 use axum::routing::get;
 use axum::Router;
 use tokio;
@@ -22,7 +25,7 @@ async fn main() {
 }
 
 async fn hello_world(
-    name: Option<axum::extract::Query<std::collections::HashMap<String, String>>>,
+    name: Option<Query<HashMap<String, String>>>,
 ) -> axum::response::Response<String> {
     let response_text = match name {
         Some(query) => {
