@@ -25,21 +25,18 @@ async fn main() {
 }
 
 async fn hello_world(
-    name: Option<Query<HashMap<String, String>>>,
+    name: Query<HashMap<String, String>>,
 ) -> axum::response::Response<String> {
-    let response_text = match name {
-        Some(query) => {
-            let name = query.0.get("name");
-            match name {
-                Some(name) if name.trim().is_empty() => "Hello, Anonymous!".to_string(),
-                Some(name) => {
-                    let sanitized = name.trim().to_string();
-                    format!("Hello, {}!", sanitized)
-                },
-                None => "Hello, World!".to_string(),
-            }
-        },
-        None => "Hello, World!".to_string(),
+    let response_text = {
+        let name = name.0.get("name");
+        match name {
+            Some(name) if name.trim().is_empty() => "Hello, Anonymous!".to_string(),
+            Some(name) => {
+                let sanitized = name.trim().to_string();
+                format!("Hello, {}!", sanitized)
+            },
+            None => "Hello, World!".to_string(),
+        }
     };
 
     axum::response::Response::builder()
