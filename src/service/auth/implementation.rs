@@ -1,15 +1,12 @@
+use teloc::Dependency;
+
 use crate::repository::auth::traits::AuthRepository;
 
 use super::errors::AuthServiceError;
 
+#[derive(Dependency)]
 struct AuthService {
     repository: Box<dyn AuthRepository>,
-}
-
-impl AuthService {
-    pub(crate) fn new(repository: Box<dyn AuthRepository>) -> Self {
-        Self { repository }
-    }
 }
 
 impl super::traits::AuthService for AuthService {

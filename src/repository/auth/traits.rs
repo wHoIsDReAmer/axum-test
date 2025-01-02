@@ -1,3 +1,5 @@
+use teloc::Dependency;
+
 use super::errors::AuthRepositoryError;
 
 pub(crate) trait AuthRepository {
