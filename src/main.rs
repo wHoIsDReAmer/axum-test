@@ -1,3 +1,6 @@
+mod repository;
+mod service;
+
 use std::collections::HashMap;
 
 use axum::extract::Query;
