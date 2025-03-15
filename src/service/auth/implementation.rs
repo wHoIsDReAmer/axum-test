@@ -1,15 +1,16 @@
-use teloc::Dependency;
-
+use std::sync::Arc;
+use shaku::Component;
 use crate::repository::auth::traits::AuthRepository;
+use super::{errors::AuthServiceError, traits::AuthService};
 
-use super::errors::AuthServiceError;
-
-#[derive(Dependency)]
-struct AuthService {
-    repository: Box<dyn AuthRepository>,
+#[derive(Component)]
+#[shaku(interface = AuthService)]
+pub(crate) struct AuthServiceImpl {
+    #[shaku(inject)]
+    repository: Arc<dyn AuthRepository>,
 }
 
-impl super::traits::AuthService for AuthService {
+impl AuthService for AuthServiceImpl {
     fn login(&self, username: &str, password: &str) -> Result<String, AuthServiceError> {
         if username.trim().is_empty() || password.trim().is_empty() {
             return Err(AuthServiceError::InvalidCredentials);

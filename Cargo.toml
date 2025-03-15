@@ -12,11 +12,11 @@ opt-level = 'z'
 [dependencies]
 tokio = { version = "1.42.0", features = ["full"] }
 axum = "0.8.0"
-teloc = "0.2.0"
+shaku = "0.6.2"
 quicklog = "0.1.18"
-# postgres = "0.19.9"
 anyhow = "1.0.95"
 sqlx = { version = "0.8.2", features = ["runtime-tokio", "tls-rustls", "postgres"] }
+async-trait = "0.1.88"
 
 toml = "0.8.19"
 serde = { version = "1.0.217", features = ["derive"] }

@@ -1,11 +1,14 @@
+use std::sync::Arc;
+
+use shaku::Component;
 use sqlx::PgPool;
-use teloc::Dependency;
 
 use super::{errors::AuthRepositoryError, traits::AuthRepository};
 
-#[derive(Dependency)]
+#[derive(Component)]
+#[shaku(interface = AuthRepository)]
 pub (crate) struct AuthRepositoryImpl {
-    db: PgPool,
+    db: Arc<PgPool>,
 }
 
 impl AuthRepository for AuthRepositoryImpl {
