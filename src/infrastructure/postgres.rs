@@ -15,3 +15,20 @@ pub(crate) async fn create_connection(config: &DatabaseConfig) -> Result<PgPool>
 
     Ok(PgPool::connect(&connection_string).await?)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;   
+    #[tokio::test]
+    async fn test_create_connection() {
+        let config = DatabaseConfig::new(
+            "localhost".to_string(),
+            5432,
+            "postgres".to_string(),
+            "1234".to_string(),
+            "postgres".to_string(),
+        );
+        let pool = create_connection(&config).await;
+        assert!(pool.is_ok());
+    }
+}
