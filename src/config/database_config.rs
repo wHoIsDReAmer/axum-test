@@ -12,6 +12,7 @@ pub(crate) struct DatabaseConfig {
     pub(crate) database: String,
 }
 
+#[allow(unused)]
 impl DatabaseConfig {
     pub(crate) fn new(host: String, port: u16, user: String, password: String, database: String) -> Self {
         Self { host, port, user, password, database }
