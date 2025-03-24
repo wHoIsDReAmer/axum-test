@@ -4,16 +4,18 @@ mod config;
 mod handler;
 mod di;
 
+mod di_provider;
+
 use std::{path::PathBuf, sync::Arc};
 
 use axum::{routing::post, Router};
 use config::database_config::DatabaseConfig;
 use di::{auth::AuthModule, db::DatabaseModule};
+use di_provider::{setup_auth_service, setup_pool};
 use handler::auth;
 use infrastructure::postgres::{PostgresConnection, PostgresConnectionImpl, PostgresConnectionImplParameters};
 use infrastructure::repository::auth::implementation::{AuthRepositoryImpl, AuthRepositoryImplParameters};
 use service::auth::{implementation::AuthServiceImpl, traits::AuthService};
-use shaku::HasComponent;
 use tokio::{self, net::TcpListener};
 use anyhow::Result;
 
@@ -32,21 +34,8 @@ async fn main() {
 
     let config = load_database_config().expect("Failed to load database config");
     
-    let db_module = DatabaseModule::builder()
-        .with_component_parameters::<PostgresConnectionImpl>(PostgresConnectionImplParameters {
-            config: Arc::new(config),
-            pool: tokio::sync::OnceCell::new(),
-        })
-        .build();
-    let conn: &dyn PostgresConnection = db_module.resolve_ref();
-    let pool = conn.get_pool().await.expect("Failed to get database pool");
-    
-    let auth_module = AuthModule::builder()
-        .with_component_parameters::<AuthRepositoryImpl>(AuthRepositoryImplParameters {
-            db: pool,
-        })
-        .build();
-    let auth_service: Arc<dyn AuthService> = auth_module.resolve();
+    let pool = setup_pool(config).await;
+    let auth_service = setup_auth_service(pool).await;
 
     let port = 3000;
     let listener = TcpListener::bind(format!("0.0.0.0:{}", port)).await.unwrap();
