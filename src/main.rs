@@ -28,21 +28,27 @@ fn load_database_config() -> Result<DatabaseConfig> {
     DatabaseConfig::try_from(path)
 }
 
-#[tokio::main]
-async fn main() {
-    setup_logger();
-
+async fn setup_app() -> Router {
     let config = load_database_config().expect("Failed to load database config");
     
     let pool = setup_pool(config).await;
     let auth_service = setup_auth_service(pool).await;
 
     let port = 3000;
-    let listener = TcpListener::bind(format!("0.0.0.0:{}", port)).await.unwrap();
 
     let app = Router::new()
         .route("/", post(auth::login))
         .with_state(auth_service);
+    
+    app
+}
+
+#[tokio::main]
+async fn main() {
+    setup_logger();
+
+    let app = setup_app().await;
+    let listener = TcpListener::bind(format!("0.0.0.0:{}", port)).await.unwrap();
     
     axum::serve::serve(listener, app)
         .await
