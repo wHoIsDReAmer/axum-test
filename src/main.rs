@@ -1,4 +1,3 @@
-mod repository;
 mod service;
 mod infrastructure;
 mod config;
@@ -12,7 +11,7 @@ use config::database_config::DatabaseConfig;
 use di::{auth::AuthModule, db::DatabaseModule};
 use handler::auth;
 use infrastructure::postgres::{PostgresConnection, PostgresConnectionImpl, PostgresConnectionImplParameters};
-use repository::auth::implementation::{AuthRepositoryImpl, AuthRepositoryImplParameters};
+use infrastructure::repository::auth::implementation::{AuthRepositoryImpl, AuthRepositoryImplParameters};
 use service::auth::{implementation::AuthServiceImpl, traits::AuthService};
 use shaku::HasComponent;
 use tokio::{self, net::TcpListener};

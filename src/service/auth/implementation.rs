@@ -1,6 +1,6 @@
 use std::sync::Arc;
 use shaku::Component;
-use crate::repository::auth::traits::AuthRepository;
+use crate::infrastructure::repository::auth::traits::AuthRepository;
 use super::{errors::AuthServiceError, traits::AuthService};
 
 #[derive(Component)]
