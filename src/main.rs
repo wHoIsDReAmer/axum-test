@@ -6,7 +6,7 @@ mod di;
 
 mod di_provider;
 
-use std::{path::PathBuf, sync::Arc};
+use std::path::PathBuf;
 
 use axum::{routing::post, Router};
 use config::database_config::DatabaseConfig;
