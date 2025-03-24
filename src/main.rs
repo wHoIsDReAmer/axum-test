@@ -34,8 +34,6 @@ async fn setup_app() -> Router {
     let pool = setup_pool(config).await;
     let auth_service = setup_auth_service(pool).await;
 
-    let port = 3000;
-
     let app = Router::new()
         .route("/", post(auth::login))
         .with_state(auth_service);
@@ -46,6 +44,8 @@ async fn setup_app() -> Router {
 #[tokio::main]
 async fn main() {
     setup_logger();
+    
+    let port = 3000;
 
     let app = setup_app().await;
     let listener = TcpListener::bind(format!("0.0.0.0:{}", port)).await.unwrap();
