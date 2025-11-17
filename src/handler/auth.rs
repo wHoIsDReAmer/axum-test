@@ -20,7 +20,10 @@ pub(crate) async fn login(
     State(auth_service): State<Arc<dyn AuthService>>,
     Json(request): Json<LoginRequest>,
 ) -> impl IntoResponse {
-    match auth_service.login(&request.username, &request.password) {
+    match auth_service
+        .login(&request.username, &request.password)
+        .await
+    {
         Ok(token) => Json(LoginResponse { token }).into_response(),
         Err(e) => (StatusCode::UNAUTHORIZED, e.to_string()).into_response(),
     }

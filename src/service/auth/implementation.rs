@@ -1,5 +1,6 @@
 use super::{errors::AuthServiceError, traits::AuthService};
 use crate::infrastructure::repository::auth::traits::AuthRepository;
+use async_trait::async_trait;
 use shaku::Component;
 use std::sync::Arc;
 
@@ -10,13 +11,14 @@ pub(crate) struct AuthServiceImpl {
     repository: Arc<dyn AuthRepository>,
 }
 
+#[async_trait]
 impl AuthService for AuthServiceImpl {
-    fn login(&self, username: &str, password: &str) -> Result<String, AuthServiceError> {
+    async fn login(&self, username: &str, password: &str) -> Result<String, AuthServiceError> {
         if username.trim().is_empty() || password.trim().is_empty() {
             return Err(AuthServiceError::InvalidCredentials);
         }
 
-        match self.repository.verify_credentials(username, password) {
+        match self.repository.verify_credentials(username, password).await {
             Ok(true) => Ok(format!("token_{}", username)),
             Ok(false) => Err(AuthServiceError::InvalidCredentials),
             Err(e) => Err(AuthServiceError::DatabaseError(e.to_string())),
