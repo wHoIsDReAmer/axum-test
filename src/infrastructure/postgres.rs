@@ -1,7 +1,7 @@
+use anyhow::Result;
 use shaku::{Component, Interface};
 use sqlx::PgPool;
 use std::sync::Arc;
-use anyhow::Result;
 
 use crate::config::database_config::DatabaseConfig;
 
@@ -22,21 +22,24 @@ pub(crate) struct PostgresConnectionImpl {
 #[async_trait]
 impl PostgresConnection for PostgresConnectionImpl {
     async fn get_pool(&self) -> Result<Arc<PgPool>> {
-        let pool = self.pool.get_or_init(|| async {
-            let connection_string = format!(
-                "postgresql://{}:{}@{}:{}/{}",
-                self.config.user,
-                self.config.password,
-                self.config.host,
-                self.config.port,
-                self.config.database
-            );
+        let pool = self
+            .pool
+            .get_or_init(|| async {
+                let connection_string = format!(
+                    "postgresql://{}:{}@{}:{}/{}",
+                    self.config.user,
+                    self.config.password,
+                    self.config.host,
+                    self.config.port,
+                    self.config.database
+                );
 
-            match PgPool::connect(&connection_string).await {
-                Ok(pool) => Arc::new(pool),
-                Err(e) => panic!("Failed to connect to database: {}", e),
-            }
-        }).await;
+                match PgPool::connect(&connection_string).await {
+                    Ok(pool) => Arc::new(pool),
+                    Err(e) => panic!("Failed to connect to database: {}", e),
+                }
+            })
+            .await;
 
         Ok(pool.clone())
     }
@@ -56,7 +59,7 @@ impl PostgresConnection for PostgresConnectionImpl {
 
 // #[cfg(test)]
 // mod tests {
-//     use super::*;   
+//     use super::*;
 //     #[tokio::test]
 //     async fn test_create_connection() {
 //         let config = DatabaseConfig::new(

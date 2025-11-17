@@ -7,12 +7,16 @@ use super::{errors::AuthRepositoryError, traits::AuthRepository};
 
 #[derive(Component)]
 #[shaku(interface = AuthRepository)]
-pub (crate) struct AuthRepositoryImpl {
+pub(crate) struct AuthRepositoryImpl {
     db: Arc<PgPool>,
 }
 
 impl AuthRepository for AuthRepositoryImpl {
-    fn verify_credentials(&self, username: &str, password: &str) -> Result<bool, AuthRepositoryError> {
+    fn verify_credentials(
+        &self,
+        username: &str,
+        password: &str,
+    ) -> Result<bool, AuthRepositoryError> {
         Ok(true)
     }
 }

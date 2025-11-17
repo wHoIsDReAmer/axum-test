@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
-use serde::Deserialize;
 use anyhow::Result;
+use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub(crate) struct DatabaseConfig {
@@ -14,8 +14,20 @@ pub(crate) struct DatabaseConfig {
 
 #[allow(unused)]
 impl DatabaseConfig {
-    pub(crate) fn new(host: String, port: u16, user: String, password: String, database: String) -> Self {
-        Self { host, port, user, password, database }
+    pub(crate) fn new(
+        host: String,
+        port: u16,
+        user: String,
+        password: String,
+        database: String,
+    ) -> Self {
+        Self {
+            host,
+            port,
+            user,
+            password,
+            database,
+        }
     }
 }
 

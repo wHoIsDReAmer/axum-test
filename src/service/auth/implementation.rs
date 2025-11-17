@@ -1,7 +1,7 @@
-use std::sync::Arc;
-use shaku::Component;
-use crate::infrastructure::repository::auth::traits::AuthRepository;
 use super::{errors::AuthServiceError, traits::AuthService};
+use crate::infrastructure::repository::auth::traits::AuthRepository;
+use shaku::Component;
+use std::sync::Arc;
 
 #[derive(Component)]
 #[shaku(interface = AuthService)]
@@ -17,9 +17,7 @@ impl AuthService for AuthServiceImpl {
         }
 
         match self.repository.verify_credentials(username, password) {
-            Ok(true) => {
-                Ok(format!("token_{}", username))
-            }
+            Ok(true) => Ok(format!("token_{}", username)),
             Ok(false) => Err(AuthServiceError::InvalidCredentials),
             Err(e) => Err(AuthServiceError::DatabaseError(e.to_string())),
         }

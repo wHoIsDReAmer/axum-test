@@ -3,7 +3,10 @@ use std::sync::Arc;
 use shaku::HasComponent;
 use sqlx::{Pool, Postgres};
 
-use crate::{AuthModule, AuthRepositoryImpl, AuthRepositoryImplParameters, AuthService, DatabaseConfig, DatabaseModule, PostgresConnection, PostgresConnectionImpl, PostgresConnectionImplParameters};
+use crate::{
+    AuthModule, AuthRepositoryImpl, AuthRepositoryImplParameters, AuthService, DatabaseConfig,
+    DatabaseModule, PostgresConnection, PostgresConnectionImpl, PostgresConnectionImplParameters,
+};
 
 pub async fn setup_pool(config: DatabaseConfig) -> Arc<Pool<Postgres>> {
     let db_module = DatabaseModule::builder()
@@ -20,9 +23,7 @@ pub async fn setup_pool(config: DatabaseConfig) -> Arc<Pool<Postgres>> {
 
 pub async fn setup_auth_service(pool: Arc<Pool<Postgres>>) -> Arc<dyn AuthService> {
     let auth_module = AuthModule::builder()
-        .with_component_parameters::<AuthRepositoryImpl>(AuthRepositoryImplParameters {
-            db: pool,
-        })
+        .with_component_parameters::<AuthRepositoryImpl>(AuthRepositoryImplParameters { db: pool })
         .build();
 
     auth_module.resolve()

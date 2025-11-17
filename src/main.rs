@@ -1,23 +1,27 @@
-mod service;
-mod infrastructure;
 mod config;
-mod handler;
 mod di;
+mod handler;
+mod infrastructure;
+mod service;
 
 mod di_provider;
 
 use std::path::PathBuf;
 
+use anyhow::Result;
 use axum::{routing::post, Router};
 use config::database_config::DatabaseConfig;
 use di::{auth::AuthModule, db::DatabaseModule};
 use di_provider::{setup_auth_service, setup_pool};
 use handler::auth;
-use infrastructure::postgres::{PostgresConnection, PostgresConnectionImpl, PostgresConnectionImplParameters};
-use infrastructure::repository::auth::implementation::{AuthRepositoryImpl, AuthRepositoryImplParameters};
+use infrastructure::postgres::{
+    PostgresConnection, PostgresConnectionImpl, PostgresConnectionImplParameters,
+};
+use infrastructure::repository::auth::implementation::{
+    AuthRepositoryImpl, AuthRepositoryImplParameters,
+};
 use service::auth::{implementation::AuthServiceImpl, traits::AuthService};
 use tokio::{self, net::TcpListener};
-use anyhow::Result;
 
 fn setup_logger() {
     quicklog::init!();
@@ -30,26 +34,28 @@ fn load_database_config() -> Result<DatabaseConfig> {
 
 async fn setup_app() -> Router {
     let config = load_database_config().expect("Failed to load database config");
-    
+
     let pool = setup_pool(config).await;
     let auth_service = setup_auth_service(pool).await;
 
-    let app = Router::new()
-        .route("/", post(auth::login))
-        .with_state(auth_service);
     
-    app
+
+    Router::new()
+        .route("/", post(auth::login))
+        .with_state(auth_service)
 }
 
 #[tokio::main]
 async fn main() {
     setup_logger();
-    
+
     let port = 3000;
 
     let app = setup_app().await;
-    let listener = TcpListener::bind(format!("0.0.0.0:{}", port)).await.unwrap();
-    
+    let listener = TcpListener::bind(format!("0.0.0.0:{}", port))
+        .await
+        .unwrap();
+
     axum::serve::serve(listener, app)
         .await
         .expect("Failed to serve");
