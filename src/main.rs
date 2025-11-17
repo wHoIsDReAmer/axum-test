@@ -38,8 +38,6 @@ async fn setup_app() -> Router {
     let pool = setup_pool(config).await;
     let auth_service = setup_auth_service(pool).await;
 
-    
-
     Router::new()
         .route("/", post(auth::login))
         .with_state(auth_service)
